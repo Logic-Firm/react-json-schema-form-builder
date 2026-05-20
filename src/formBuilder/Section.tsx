@@ -14,6 +14,7 @@ import {
   faArrowDown,
   faPencilAlt,
   faTrash,
+  faClose
 } from '@fortawesome/free-solid-svg-icons';
 import FBCheckbox from './checkbox/FBCheckbox';
 import Collapse from './Collapse/Collapse';
@@ -35,6 +36,17 @@ import { getRandomId } from './utils';
 import type { SectionPropsType } from './types';
 
 const useStyles = createUseStyles({
+  headerDelete: {
+    display: 'flex',
+    '& .fa-cross': {
+      border: '1px solid #de5354',
+      color: '#de5354',
+      borderRadius: '4px',
+      padding: '.25em',
+      height: '28px',
+      width: '28px',
+    },
+  },
   sectionContainer: {
     '& .section-head': {
       display: 'flex',
@@ -193,6 +205,22 @@ export default function Section({
                 Move form element down
               </UncontrolledTooltip>
             </span>
+          </React.Fragment>
+        }
+        headerActions={
+          <React.Fragment>
+            <span className={classes.headerDelete} id={`${elementId}_trashbiginfo`}>
+              <FontAwesomeIcon
+                icon={faClose}
+                onClick={() => (onDelete ? onDelete() : {})}
+              />
+            </span>
+            <UncontrolledTooltip
+              placement='top'
+              target={`${elementId}_trashbiginfo`}
+            >
+              Delete form element
+            </UncontrolledTooltip>
           </React.Fragment>
         }
         className={`section-container ${classes.sectionContainer} ${
@@ -435,18 +463,6 @@ export default function Section({
               target={`${elementId}_editinfo`}
             >
               Additional configurations for this form element
-            </UncontrolledTooltip>
-            <span id={`${elementId}_trashinfo`}>
-              <FontAwesomeIcon
-                icon={faTrash}
-                onClick={() => (onDelete ? onDelete() : {})}
-              />
-            </span>
-            <UncontrolledTooltip
-              placement='top'
-              target={`${elementId}_trashinfo`}
-            >
-              Delete form element
             </UncontrolledTooltip>
             <FBCheckbox
               onChangeValue={() => onRequireToggle()}

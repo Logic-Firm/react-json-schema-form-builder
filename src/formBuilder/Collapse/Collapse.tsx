@@ -9,6 +9,12 @@ const useStyles = createUseStyles({
   collapseElement: {
     '& .disabled': { '.toggle-collapse': { cursor: 'default' } },
     '& h4': { marginTop: '7px', padding: '13px 10px 10px 10px' },
+    '& .header-actions': {
+      marginLeft: 'auto',
+      display: 'flex',
+      alignItems: 'center',
+      paddingRight: '10px',
+    },
     '& .toggle-collapse': {
       fontSize: '2.3rem',
       cursor: 'pointer',
@@ -32,6 +38,7 @@ interface CollapseProps {
   // If true will gray out and disable */
   disableToggle?: boolean;
   className?: string;
+  headerActions?: ReactNode;
 }
 
 const Collapse: FC<CollapseProps> = (props) => {
@@ -56,6 +63,7 @@ const Collapse: FC<CollapseProps> = (props) => {
           />
         </span>
         <h4>{props.title}</h4>
+        <span className='header-actions'>{props.headerActions}</span>
       </div>
       <RSCollapse isOpen={props.isOpen}>
         <div>{props.children}</div>

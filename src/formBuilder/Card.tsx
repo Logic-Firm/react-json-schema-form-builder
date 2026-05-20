@@ -6,6 +6,7 @@ import {
   faArrowDown,
   faPencilAlt,
   faTrash,
+  faClose
 } from '@fortawesome/free-solid-svg-icons';
 import FBCheckbox from './checkbox/FBCheckbox';
 import Collapse from './Collapse/Collapse';
@@ -18,6 +19,17 @@ import { getRandomId } from './utils';
 import type { CardPropsType, CardComponentPropsType } from './types';
 
 const useStyles = createUseStyles({
+  headerDelete: {
+    display: 'flex',
+    '& .fa-trash': {
+      border: '1px solid #DE5354',
+      color: '#DE5354',
+      borderRadius: '4px',
+      padding: '.25em',
+      height: '28px',
+      width: '28px',
+    },
+  },
   cardEntries: {
     'border-bottom': '1px solid gray',
     margin: '.5em 1.5em 0 1.5em',
@@ -172,6 +184,22 @@ export default function Card({
             </span>
           </React.Fragment>
         }
+        headerActions={
+          <React.Fragment>
+            <span className={classes.headerDelete} id={`${elementId}_trashbiginfo`}>
+              <FontAwesomeIcon
+                icon={faClose}
+                onClick={() => onDelete && onDelete()}
+              />
+            </span>
+            <UncontrolledTooltip
+              placement='top'
+              target={`${elementId}_trashbiginfo`}
+            >
+              Delete form element
+            </UncontrolledTooltip>
+          </React.Fragment>
+        }
         className={`card-container ${
           componentProps.dependent ? 'card-dependent' : ''
         } ${componentProps.$ref === undefined ? '' : 'card-reference'}`}
@@ -194,18 +222,6 @@ export default function Card({
           </span>
           <UncontrolledTooltip placement='top' target={`${elementId}_editinfo`}>
             Additional configurations for this form element
-          </UncontrolledTooltip>
-          <span id={`${elementId}_trashinfo`}>
-            <FontAwesomeIcon
-              icon={faTrash}
-              onClick={() => onDelete && onDelete()}
-            />
-          </span>
-          <UncontrolledTooltip
-            placement='top'
-            target={`${elementId}_trashinfo`}
-          >
-            Delete form element
           </UncontrolledTooltip>
           <FBCheckbox
             onChangeValue={() =>
