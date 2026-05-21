@@ -116,13 +116,13 @@ const InnerCard: CardComponentType = ({ parameters, onChange, mods }) => {
         id={`${elementId}_issection`}
       />
       {generateElementComponentsFromSchemas({
-        schemaData: { properties: { item: newDataProps.items } },
-        uiSchemaData: { item: newUiProps.items },
+        schemaData: { properties: { items: newDataProps.items } },
+        uiSchemaData: { items: newUiProps.items },
         onChange: (schema, uischema) => {
           onChange({
             ...parameters,
-            items: schema.properties.item,
-            'ui:*items': uischema.item || {},
+            items: schema.properties.items,
+            'ui:*items': uischema.items || {},
           });
         },
         path: elementId,
