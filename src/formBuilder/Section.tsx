@@ -375,6 +375,26 @@ export default function Section({
               ))}
             </Alert>
           </div>
+          <div className='section-interactions'>
+            <span id={`${elementId}_editinfo`}>
+              <FontAwesomeIcon
+                icon={faPencilAlt}
+                onClick={() => setModalOpen(true)}
+              />
+            </span>
+            <UncontrolledTooltip
+              placement='top'
+              target={`${elementId}_editinfo`}
+            >
+              Additional configurations for this form element
+            </UncontrolledTooltip>
+            <FBCheckbox
+              onChangeValue={() => onRequireToggle()}
+              isChecked={required}
+              label='Required'
+              id={`${elementId}_required`}
+            />
+          </div>
           <div className='section-body'>
             <DragDropContext
               onDragEnd={(result) =>
@@ -450,26 +470,6 @@ export default function Section({
                 hidden={hideAddButton}
               />
             )}
-          </div>
-          <div className='section-interactions'>
-            <span id={`${elementId}_editinfo`}>
-              <FontAwesomeIcon
-                icon={faPencilAlt}
-                onClick={() => setModalOpen(true)}
-              />
-            </span>
-            <UncontrolledTooltip
-              placement='top'
-              target={`${elementId}_editinfo`}
-            >
-              Additional configurations for this form element
-            </UncontrolledTooltip>
-            <FBCheckbox
-              onChangeValue={() => onRequireToggle()}
-              isChecked={required}
-              label='Required'
-              id={`${elementId}_required`}
-            />
           </div>
         </div>
         <CardModal
