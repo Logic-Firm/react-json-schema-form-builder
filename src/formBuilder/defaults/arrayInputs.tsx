@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Input } from 'reactstrap';
 import {
-  excludeKeys,
   generateElementComponentsFromSchemas,
   generateCategoryHash,
 } from '../utils';
@@ -62,9 +61,10 @@ const InnerCard: CardComponentType = ({ parameters, onChange, mods }) => {
   const [elementId] = useState(getRandomId);
   const newDataProps: { [key: string]: any } = {};
   const newUiProps: { [key: string]: any } = {};
-  const allFormInputs = excludeKeys(
-    Object.assign({}, defaultFormInputs, (mods && mods.customFormInputs) || {}),
-    mods && mods.deactivatedFormInputs,
+  const allFormInputs = Object.assign(
+    {},
+    defaultFormInputs,
+    (mods && mods.customFormInputs) || {},
   );
 
   // parse components into data and ui relevant pieces

@@ -191,7 +191,7 @@ export default function CardGeneralParameterInputs({
           </FormGroup>
         </div>
         <div
-          className={classnames('card-entry', {
+          className={classnames('card-entry input-type-entry', {
             'wide-card-entry': !showObjectNameInput,
           })}
         >

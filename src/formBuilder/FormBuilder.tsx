@@ -16,7 +16,6 @@ import {
   onDragEnd,
   countElementsFromSchema,
   generateCategoryHash,
-  excludeKeys,
 } from './utils';
 import DEFAULT_FORM_INPUTS from './defaults/defaultFormInputs';
 import type {
@@ -204,13 +203,10 @@ export default function FormBuilder({
   const schemaData = parse(schema);
   schemaData.type = 'object';
   const uiSchemaData = parse(uischema);
-  const allFormInputs = excludeKeys(
-    Object.assign(
-      {},
-      DEFAULT_FORM_INPUTS,
-      (mods && mods.customFormInputs) || {},
-    ),
-    mods && mods.deactivatedFormInputs,
+  const allFormInputs = Object.assign(
+    {},
+    DEFAULT_FORM_INPUTS,
+    (mods && mods.customFormInputs) || {},
   );
 
   const unsupportedFeatures = checkForUnsupportedFeatures(

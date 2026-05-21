@@ -64,7 +64,7 @@ describe('Card', () => {
     const deleteButton = wrapper
       .find('.card-container')
       .first()
-      .find('.fa-trash')
+      .find('.fa-xmark')
       .first();
     deleteButton.simulate('click');
     expect(mockEvent).toHaveBeenCalledTimes(1);
@@ -224,5 +224,54 @@ describe('Card', () => {
 
     const inputTypeLabel = getHeadingText(wrapper, 3);
     expect(inputTypeLabel).toContain('Custom Input Type');
+  });
+
+  it('hides deactivated input types from the dropdown', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const wrapper = mount(
+      <Card
+        {...props}
+        mods={{
+          deactivatedFormInputs: ['array'],
+        }}
+      />,
+      { attachTo: div },
+    );
+    const options = wrapper.find('Select').at(0).prop('options') as Array<{
+      value: string;
+      label: string;
+    }>;
+    expect(options.some((option) => option.value === 'array')).toBeFalsy();
+  });
+
+  it('keeps existing deactivated input types functional on cards', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const arrayProps = {
+      ...props,
+      mods: {
+        deactivatedFormInputs: ['array'],
+      },
+      componentProps: {
+        ...props.componentProps,
+        category: 'array',
+        type: 'array',
+        items: { type: 'string' },
+      },
+    };
+    const wrapper = mount(<Card {...arrayProps} />, { attachTo: div });
+    const selectValue = wrapper.find('Select').at(0).prop('value') as unknown as {
+      value: string;
+      label: string;
+    };
+    const options = wrapper.find('Select').at(0).prop('options') as Array<{
+      value: string;
+      label: string;
+    }>;
+    expect(selectValue.value).toEqual('array');
+    expect(selectValue.label).toEqual('Array');
+    expect(options.some((option) => option.value === 'array')).toBeFalsy();
+    expect(wrapper.exists('.card-array')).toBeTruthy();
   });
 });

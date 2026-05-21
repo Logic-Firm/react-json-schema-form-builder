@@ -200,7 +200,7 @@ export default function Card({
             </UncontrolledTooltip>
           </React.Fragment>
         }
-        className={`card-container ${
+        className={`card-container ${componentProps.type || ''}-field ${
           componentProps.dependent ? 'card-dependent' : ''
         } ${componentProps.$ref === undefined ? '' : 'card-reference'}`}
       >
