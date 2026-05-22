@@ -270,6 +270,9 @@ export interface Mods {
   deactivatedFormInputs?: Array<string>;
   newElementDefaultDataOptions?: DataOptions;
   newElementDefaultUiSchema?: { [key: string]: any };
+  disableInputs?: (parameters: {
+    componentProps: CardComponentPropsType;
+  }) => boolean;
 }
 
 export type FormInput = FormInputType;

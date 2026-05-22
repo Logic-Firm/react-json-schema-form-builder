@@ -127,6 +127,9 @@ export default function Card({
   const classes = useStyles();
   const [modalOpen, setModalOpen] = React.useState(false);
   const [elementId] = React.useState(getRandomId());
+  const shouldDisableInputs = mods?.disableInputs
+    ? mods.disableInputs({ componentProps })
+    : false;
 
   return (
     <React.Fragment>
@@ -204,46 +207,56 @@ export default function Card({
           componentProps.dependent ? 'card-dependent' : ''
         } ${componentProps.$ref === undefined ? '' : 'card-reference'}`}
       >
-        <div className={classes.cardEntries}>
-          <CardGeneralParameterInputs
-            parameters={componentProps}
-            onChange={onChange}
-            allFormInputs={allFormInputs}
-            mods={mods}
-            showObjectNameInput={showObjectNameInput}
-          />
-        </div>
-        <div className={classes.cardInteractions}>
-          <span id={`${elementId}_editinfo`}>
-            <FontAwesomeIcon
-              icon={faPencilAlt}
-              onClick={() => setModalOpen(true)}
+        <fieldset
+          disabled={shouldDisableInputs}
+          style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}
+        >
+          <div className={classes.cardEntries}>
+            <CardGeneralParameterInputs
+              parameters={componentProps}
+              onChange={onChange}
+              allFormInputs={allFormInputs}
+              mods={mods}
+              showObjectNameInput={showObjectNameInput}
             />
-          </span>
-          <UncontrolledTooltip placement='top' target={`${elementId}_editinfo`}>
-            Additional configurations for this form element
-          </UncontrolledTooltip>
-          <FBCheckbox
-            onChangeValue={() =>
-              onChange({
-                ...componentProps,
-                required: !componentProps.required,
-              })
-            }
-            isChecked={!!componentProps.required}
-            label='Required'
-            id={`${elementId}_required`}
+          </div>
+          <div className={classes.cardInteractions}>
+            <span id={`${elementId}_editinfo`}>
+              <FontAwesomeIcon
+                icon={faPencilAlt}
+                onClick={() => setModalOpen(true)}
+              />
+            </span>
+            <UncontrolledTooltip placement='top' target={`${elementId}_editinfo`}>
+              Additional configurations for this form element
+            </UncontrolledTooltip>
+            <FBCheckbox
+              onChangeValue={() =>
+                onChange({
+                  ...componentProps,
+                  required: !componentProps.required,
+                })
+              }
+              isChecked={!!componentProps.required}
+              label='Required'
+              id={`${elementId}_required`}
+            />
+          </div>
+        </fieldset>
+        <fieldset
+          disabled={shouldDisableInputs}
+          style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}
+        >
+          <CardModal
+            componentProps={componentProps as CardComponentPropsType}
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+            onChange={(newComponentProps: CardComponentPropsType) => {
+              onChange(newComponentProps);
+            }}
+            TypeSpecificParameters={TypeSpecificParameters}
           />
-        </div>
-        <CardModal
-          componentProps={componentProps as CardComponentPropsType}
-          isOpen={modalOpen}
-          onClose={() => setModalOpen(false)}
-          onChange={(newComponentProps: CardComponentPropsType) => {
-            onChange(newComponentProps);
-          }}
-          TypeSpecificParameters={TypeSpecificParameters}
-        />
+        </fieldset>
       </Collapse>
       {mods?.components?.add && mods?.components?.add(addProperties)}
       {!mods?.components?.add && addElem && (

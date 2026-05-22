@@ -57,6 +57,9 @@ export default function CardGeneralParameterInputs({
   const displayNameLabel = fetchLabel('displayNameLabel', 'Display Name');
   const descriptionLabel = fetchLabel('descriptionLabel', 'Description');
   const inputTypeLabel = fetchLabel('inputTypeLabel', 'Input Type');
+  const shouldDisableInputs = mods?.disableInputs
+    ? mods.disableInputs({ componentProps: parameters })
+    : false;
 
   const availableInputTypes = () => {
     const definitionsInSchema =
@@ -216,6 +219,7 @@ export default function CardGeneralParameterInputs({
             }}
             placeholder={inputTypeLabel}
             options={availableInputTypes()}
+            isDisabled={shouldDisableInputs}
             onChange={(val: any) => {
               // figure out the new 'type'
               const newCategory = val.value;

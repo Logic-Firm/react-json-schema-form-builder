@@ -226,6 +226,38 @@ describe('Card', () => {
     expect(inputTypeLabel).toContain('Custom Input Type');
   });
 
+  it('disables card inputs when mods.disableInputs returns true', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const wrapper = mount(
+      <Card
+        {...props}
+        mods={{
+          disableInputs: () => true,
+        }}
+      />,
+      { attachTo: div },
+    );
+    expect(wrapper.find('fieldset').first().prop('disabled')).toBeTruthy();
+    expect(wrapper.find('Select').at(0).prop('isDisabled')).toBeTruthy();
+  });
+
+  it('leaves card inputs enabled when mods.disableInputs returns false', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const wrapper = mount(
+      <Card
+        {...props}
+        mods={{
+          disableInputs: () => false,
+        }}
+      />,
+      { attachTo: div },
+    );
+    expect(wrapper.find('fieldset').first().prop('disabled')).toBeFalsy();
+    expect(wrapper.find('Select').at(0).prop('isDisabled')).toBeFalsy();
+  });
+
   it('hides deactivated input types from the dropdown', () => {
     const div = document.createElement('div');
     document.body.appendChild(div);
