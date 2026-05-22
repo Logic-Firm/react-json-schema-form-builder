@@ -130,6 +130,13 @@ export default function Card({
   const shouldDisableInputs = mods?.disableInputs
     ? mods.disableInputs({ componentProps })
     : false;
+  const customDeleteButton = mods?.components?.delete
+    ? mods.components.delete({
+        elementType: 'card',
+        componentProps,
+        onDelete,
+      })
+    : null;
 
   return (
     <React.Fragment>
@@ -189,18 +196,22 @@ export default function Card({
         }
         headerActions={
           <React.Fragment>
-            <span className={classes.headerDelete} id={`${elementId}_trashbiginfo`}>
-              <FontAwesomeIcon
-                icon={faClose}
-                onClick={() => onDelete && onDelete()}
-              />
-            </span>
-            <UncontrolledTooltip
-              placement='top'
-              target={`${elementId}_trashbiginfo`}
-            >
-              Delete form element
-            </UncontrolledTooltip>
+            {customDeleteButton || (
+              <React.Fragment>
+                <span className={classes.headerDelete} id={`${elementId}_trashbiginfo`}>
+                  <FontAwesomeIcon
+                    icon={faClose}
+                    onClick={() => onDelete && onDelete()}
+                  />
+                </span>
+                <UncontrolledTooltip
+                  placement='top'
+                  target={`${elementId}_trashbiginfo`}
+                >
+                  Delete form element
+                </UncontrolledTooltip>
+              </React.Fragment>
+            )}
           </React.Fragment>
         }
         className={`card-container ${componentProps.type || ''}-field ${

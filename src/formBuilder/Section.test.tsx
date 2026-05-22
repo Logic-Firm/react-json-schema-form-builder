@@ -81,8 +81,62 @@ describe('Section', () => {
     const div = document.createElement('div');
     document.body.appendChild(div);
     const wrapper = mount(<Section {...props} />, { attachTo: div });
-    const deleteButton = wrapper.find('.fa-trash').first();
+    const deleteButton = wrapper.find('.fa-xmark').first();
     deleteButton.simulate('click');
+    expect(mockEvent).toHaveBeenCalledTimes(1);
+    expect(mockEvent).toHaveBeenCalledWith('delete');
+    mockEvent.mockClear();
+  });
+
+  it('renders a custom delete button from mods for sections', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const wrapper = mount(
+      <Section
+        {...props}
+        mods={{
+          components: {
+            delete: () => (
+              <button className='custom-section-delete'>Delete Section</button>
+            ),
+          },
+        }}
+      />,
+      { attachTo: div },
+    );
+    expect(wrapper.find('.custom-section-delete').exists()).toBeTruthy();
+    expect(wrapper.find('.fa-xmark').exists()).toBeFalsy();
+  });
+
+  it('calls onDelete from custom section delete button', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const wrapper = mount(
+      <Section
+        {...props}
+        mods={{
+          components: {
+            delete: (deleteProps) => (
+              <button
+                className='custom-section-delete-trigger'
+                data-element-type={deleteProps?.elementType}
+                onClick={() => deleteProps?.onDelete && deleteProps.onDelete()}
+              >
+                Delete Section
+              </button>
+            ),
+          },
+        }}
+      />,
+      { attachTo: div },
+    );
+    expect(
+      wrapper
+        .find('.custom-section-delete-trigger')
+        .first()
+        .prop('data-element-type'),
+    ).toEqual('section');
+    wrapper.find('.custom-section-delete-trigger').first().simulate('click');
     expect(mockEvent).toHaveBeenCalledTimes(1);
     expect(mockEvent).toHaveBeenCalledWith('delete');
     mockEvent.mockClear();

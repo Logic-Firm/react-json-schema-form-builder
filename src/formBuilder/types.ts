@@ -254,6 +254,19 @@ export interface Mods {
     add?: (properties?: {
       [key: string]: any;
     }) => ReactElement | ReactElement[] | [];
+    delete?: (properties?: {
+      elementType: 'card' | 'section';
+      componentProps?: CardComponentPropsType;
+      sectionProps?: {
+        name: string;
+        schema: { [key: string]: any };
+        uischema: { [key: string]: any };
+        reference?: string;
+        dependent?: boolean;
+        parent?: string;
+      };
+      onDelete?: () => void;
+    }) => ReactElement | ReactElement[] | [];
   };
   tooltipDescriptions?: {
     add?: string;

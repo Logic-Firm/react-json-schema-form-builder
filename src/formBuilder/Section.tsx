@@ -148,6 +148,20 @@ export default function Section({
   // keep requirements in state to avoid rapid updates
   const [modalOpen, setModalOpen] = React.useState(false);
   const [elementId] = React.useState(getRandomId());
+  const customDeleteButton = mods?.components?.delete
+    ? mods.components.delete({
+        elementType: 'section',
+        sectionProps: {
+          name,
+          schema,
+          uischema,
+          reference,
+          dependent,
+          parent,
+        },
+        onDelete,
+      })
+    : null;
   const addProperties = {
     schema,
     uischema,
@@ -209,18 +223,22 @@ export default function Section({
         }
         headerActions={
           <React.Fragment>
-            <span className={classes.headerDelete} id={`${elementId}_trashbiginfo`}>
-              <FontAwesomeIcon
-                icon={faClose}
-                onClick={() => (onDelete ? onDelete() : {})}
-              />
-            </span>
-            <UncontrolledTooltip
-              placement='top'
-              target={`${elementId}_trashbiginfo`}
-            >
-              Delete form element
-            </UncontrolledTooltip>
+            {customDeleteButton || (
+              <React.Fragment>
+                <span className={classes.headerDelete} id={`${elementId}_trashbiginfo`}>
+                  <FontAwesomeIcon
+                    icon={faClose}
+                    onClick={() => (onDelete ? onDelete() : {})}
+                  />
+                </span>
+                <UncontrolledTooltip
+                  placement='top'
+                  target={`${elementId}_trashbiginfo`}
+                >
+                  Delete form element
+                </UncontrolledTooltip>
+              </React.Fragment>
+            )}
           </React.Fragment>
         }
         className={`section-container ${classes.sectionContainer} ${

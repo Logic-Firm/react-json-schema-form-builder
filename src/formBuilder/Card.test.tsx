@@ -72,6 +72,51 @@ describe('Card', () => {
     mockEvent.mockClear();
   });
 
+  it('renders a custom delete button from mods', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const wrapper = mount(
+      <Card
+        {...props}
+        mods={{
+          components: {
+            delete: () => <button className='custom-delete'>Custom Delete</button>,
+          },
+        }}
+      />,
+      { attachTo: div },
+    );
+    expect(wrapper.find('.custom-delete').exists()).toBeTruthy();
+    expect(wrapper.find('.fa-xmark').exists()).toBeFalsy();
+  });
+
+  it('calls onDelete from custom delete button', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const wrapper = mount(
+      <Card
+        {...props}
+        mods={{
+          components: {
+            delete: (deleteProps) => (
+              <button
+                className={`custom-delete-${deleteProps?.componentProps?.category}`}
+                onClick={() => deleteProps?.onDelete && deleteProps.onDelete()}
+              >
+                Delete
+              </button>
+            ),
+          },
+        }}
+      />,
+      { attachTo: div },
+    );
+    wrapper.find('.custom-delete-shortAnswer').first().simulate('click');
+    expect(mockEvent).toHaveBeenCalledTimes(1);
+    expect(mockEvent).toHaveBeenCalledWith('delete');
+    mockEvent.mockClear();
+  });
+
   it('calls the move up and move down functions on arrow presses', () => {
     const div = document.createElement('div');
     document.body.appendChild(div);
