@@ -272,6 +272,20 @@ export interface Mods {
       isOpen: boolean;
       isDisabled?: boolean;
     }) => ReactElement | ReactElement[] | [];
+    title?: (properties?: {
+      elementType: 'card' | 'section';
+      defaultTitle: string;
+      componentProps?: CardComponentPropsType;
+      sectionProps?: {
+        name: string;
+        schema: { [key: string]: any };
+        uischema: { [key: string]: any };
+        reference?: string;
+        dependent?: boolean;
+        parent?: string;
+      };
+      isOpen: boolean;
+    }) => ReactElement | ReactElement[] | [];
   };
   tooltipDescriptions?: {
     add?: string;

@@ -88,6 +88,14 @@ describe('Section', () => {
     mockEvent.mockClear();
   });
 
+  it('keeps section child body outside the collapsible edit area', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const wrapper = mount(<Section {...props} />, { attachTo: div });
+    expect(wrapper.find('.section-body').exists()).toBeTruthy();
+    expect(wrapper.find('.collapse').first().find('.section-body').exists()).toBeFalsy();
+  });
+
   it('renders a custom delete button from mods for sections', () => {
     const div = document.createElement('div');
     document.body.appendChild(div);
@@ -166,6 +174,42 @@ describe('Section', () => {
     });
     expect(wrapper.find('.custom-collapse-toggle').exists()).toBeTruthy();
     expect(wrapper.find('.toggle-collapse .fa-caret-right').exists()).toBeFalsy();
+  });
+
+  it('renders a custom section title from mods', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const title = jest.fn(({ defaultTitle }) => (
+      <span className='custom-section-title'>Section: {defaultTitle}</span>
+    ));
+    const wrapper = mount(
+      <Section
+        {...props}
+        mods={{
+          components: {
+            title,
+          },
+        }}
+      />,
+      { attachTo: div },
+    );
+    expect(title).toHaveBeenCalledWith({
+      elementType: 'section',
+      defaultTitle: 'test',
+      sectionProps: {
+        name: 'test',
+        schema: {},
+        uischema: {},
+        reference: undefined,
+        dependent: undefined,
+        parent: undefined,
+      },
+      isOpen: false,
+    });
+    expect(wrapper.find('.custom-section-title').exists()).toBeTruthy();
+    expect(wrapper.find('.custom-section-title').first().text()).toContain(
+      'Section: test',
+    );
   });
 
   it('changes the key name of the section', () => {

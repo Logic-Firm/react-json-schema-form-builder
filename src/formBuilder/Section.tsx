@@ -148,18 +148,28 @@ export default function Section({
   // keep requirements in state to avoid rapid updates
   const [modalOpen, setModalOpen] = React.useState(false);
   const [elementId] = React.useState(getRandomId());
+  const sectionModProps = {
+    name,
+    schema,
+    uischema,
+    reference,
+    dependent,
+    parent,
+  };
   const customDeleteButton = mods?.components?.delete
     ? mods.components.delete({
         elementType: 'section',
-        sectionProps: {
-          name,
-          schema,
-          uischema,
-          reference,
-          dependent,
-          parent,
-        },
+        sectionProps: sectionModProps,
         onDelete,
+      })
+    : null;
+  const defaultSectionTitle = schemaData.title || keyName || '';
+  const customSectionTitle = mods?.components?.title
+    ? mods.components.title({
+        elementType: 'section',
+        defaultTitle: defaultSectionTitle,
+        sectionProps: sectionModProps,
+        isOpen: cardOpen,
       })
     : null;
   const addProperties = {
@@ -187,7 +197,7 @@ export default function Section({
         title={
           <React.Fragment>
             <span onClick={() => setCardOpen(!cardOpen)} className='label'>
-              {schemaData.title || keyName}{' '}
+              {customSectionTitle || defaultSectionTitle}{' '}
               {parent ? (
                 <Tooltip
                   text={`Depends on ${parent}`}
@@ -249,273 +259,279 @@ export default function Section({
         className={`section-container ${classes.sectionContainer} ${
           dependent ? 'section-dependent' : ''
         } ${reference ? 'section-reference' : ''}`}
-      >
-        <div
-          className={`section-entries ${reference ? 'section-reference' : ''}`}
-        >
-          <div className='section-head'>
-            {reference ? (
-              <div className='section-entry section-reference'>
-                <h5>Reference Section</h5>
-                <Select
-                  value={{
-                    value: reference,
-                    label: reference,
-                  }}
-                  placeholder='Reference'
-                  options={Object.keys(definitionData).map((key) => ({
-                    value: `#/definitions/${key}`,
-                    label: `#/definitions/${key}`,
-                  }))}
-                  onChange={(val: any) => {
-                    onChange(schema, uischema, val.value);
-                  }}
-                  className='section-select'
-                />
-              </div>
-            ) : (
-              ''
-            )}
-            <div className='section-entry' data-test='section-object-name'>
-              <h5>
-                Section Object Name{' '}
-                <Tooltip
-                  text={
-                    mods &&
-                    mods.tooltipDescriptions &&
-                    mods.tooltipDescriptions &&
-                    typeof mods.tooltipDescriptions.cardSectionObjectName ===
-                      'string'
-                      ? mods.tooltipDescriptions.cardSectionObjectName
-                      : 'The key to the object that will represent this form section.'
-                  }
-                  id={`${elementId}_nameinfo`}
-                  type='help'
-                />
-              </h5>
-              <FormGroup>
-                <Input
-                  invalid={keyError !== null}
-                  value={keyName || ''}
-                  placeholder='Key'
-                  type='text'
-                  onChange={(ev) => setKeyName(ev.target.value)}
-                  onBlur={(ev) => {
-                    const { value } = ev.target;
-                    if (
-                      value === name ||
-                      !(neighborNames && neighborNames.includes(value))
-                    ) {
-                      setKeyError(null);
-                      onNameChange(value);
-                    } else {
-                      setKeyName(name);
-                      setKeyError(`"${value}" is already in use.`);
-                      onNameChange(name);
+        alwaysVisibleChildren={
+          <div
+            className={`section-entries ${reference ? 'section-reference' : ''}`}
+          >
+            <div className='section-body'>
+              <DragDropContext
+                onDragEnd={(result) =>
+                  onDragEnd(result, {
+                    schema,
+                    uischema,
+                    onChange,
+                    definitionData,
+                    definitionUi,
+                    categoryHash,
+                  })
+                }
+              >
+                <Droppable droppableId='droppable'>
+                  {(providedDroppable) => (
+                    <div
+                      ref={providedDroppable.innerRef}
+                      {...providedDroppable.droppableProps}
+                    >
+                      {generateElementComponentsFromSchemas({
+                        schemaData: schema,
+                        uiSchemaData: uischema,
+                        onChange,
+                        path,
+                        definitionData,
+                        definitionUi,
+                        cardOpenArray,
+                        setCardOpenArray,
+                        allFormInputs,
+                        mods,
+                        categoryHash,
+                        Card,
+                        Section,
+                      }).map((element: any, index) => (
+                        <Draggable
+                          key={element.key}
+                          draggableId={element.key}
+                          index={index}
+                        >
+                          {(providedDraggable) => (
+                            <div
+                              ref={providedDraggable.innerRef}
+                              {...providedDraggable.draggableProps}
+                              {...providedDraggable.dragHandleProps}
+                            >
+                              {element}
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {providedDroppable.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            </div>
+            <div className='section-footer'>
+              {!hideAddButton &&
+                mods?.components?.add &&
+                mods.components.add(addProperties)}
+              {!mods?.components?.add && (
+                <Add
+                  tooltipDescription={((mods || {}).tooltipDescriptions || {}).add}
+                  addElem={(choice: string) => {
+                    if (choice === 'card') {
+                      addCardObj(addProperties);
+                    } else if (choice === 'section') {
+                      addSectionObj(addProperties);
                     }
                   }}
+                  hidden={hideAddButton}
+                />
+              )}
+            </div>
+          </div>
+        }
+      >
+        <fieldset style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+          <div
+            className={`section-entries ${reference ? 'section-reference' : ''}`}
+          >
+            <div className='section-head'>
+              {reference ? (
+                <div className='section-entry section-reference'>
+                  <h5>Reference Section</h5>
+                  <Select
+                    value={{
+                      value: reference,
+                      label: reference,
+                    }}
+                    placeholder='Reference'
+                    options={Object.keys(definitionData).map((key) => ({
+                      value: `#/definitions/${key}`,
+                      label: `#/definitions/${key}`,
+                    }))}
+                    onChange={(val: any) => {
+                      onChange(schema, uischema, val.value);
+                    }}
+                    className='section-select'
+                  />
+                </div>
+              ) : (
+                ''
+              )}
+              <div className='section-entry' data-test='section-object-name'>
+                <h5>
+                  Section Object Name{' '}
+                  <Tooltip
+                    text={
+                      mods &&
+                      mods.tooltipDescriptions &&
+                      mods.tooltipDescriptions &&
+                      typeof mods.tooltipDescriptions.cardSectionObjectName ===
+                        'string'
+                        ? mods.tooltipDescriptions.cardSectionObjectName
+                        : 'The key to the object that will represent this form section.'
+                    }
+                    id={`${elementId}_nameinfo`}
+                    type='help'
+                  />
+                </h5>
+                <FormGroup>
+                  <Input
+                    invalid={keyError !== null}
+                    value={keyName || ''}
+                    placeholder='Key'
+                    type='text'
+                    onChange={(ev) => setKeyName(ev.target.value)}
+                    onBlur={(ev) => {
+                      const { value } = ev.target;
+                      if (
+                        value === name ||
+                        !(neighborNames && neighborNames.includes(value))
+                      ) {
+                        setKeyError(null);
+                        onNameChange(value);
+                      } else {
+                        setKeyName(name);
+                        setKeyError(`"${value}" is already in use.`);
+                        onNameChange(name);
+                      }
+                    }}
+                    className='card-text'
+                    readOnly={hideKey}
+                  />
+                  <FormFeedback>{keyError}</FormFeedback>
+                </FormGroup>
+              </div>
+              <div className='section-entry' data-test='section-display-name'>
+                <h5>
+                  Section Display Name{' '}
+                  <Tooltip
+                    text={
+                      mods &&
+                      mods.tooltipDescriptions &&
+                      mods.tooltipDescriptions &&
+                      typeof mods.tooltipDescriptions.cardSectionDisplayName ===
+                        'string'
+                        ? mods.tooltipDescriptions.cardSectionDisplayName
+                        : 'The name of the form section that will be shown to users of the form.'
+                    }
+                    id={`${elementId}_titleinfo`}
+                    type='help'
+                  />
+                </h5>
+                <Input
+                  value={schemaData.title || ''}
+                  placeholder='Title'
+                  type='text'
+                  onChange={(ev) =>
+                    onChange(
+                      {
+                        ...schema,
+                        title: ev.target.value,
+                      },
+                      uischema,
+                    )
+                  }
                   className='card-text'
-                  readOnly={hideKey}
                 />
-                <FormFeedback>{keyError}</FormFeedback>
-              </FormGroup>
-            </div>
-            <div className='section-entry' data-test='section-display-name'>
-              <h5>
-                Section Display Name{' '}
-                <Tooltip
-                  text={
-                    mods &&
-                    mods.tooltipDescriptions &&
-                    mods.tooltipDescriptions &&
-                    typeof mods.tooltipDescriptions.cardSectionDisplayName ===
-                      'string'
-                      ? mods.tooltipDescriptions.cardSectionDisplayName
-                      : 'The name of the form section that will be shown to users of the form.'
+              </div>
+              <div className='section-entry' data-test='section-description'>
+                <h5>
+                  Section Description{' '}
+                  <Tooltip
+                    text={
+                      mods &&
+                      mods.tooltipDescriptions &&
+                      mods.tooltipDescriptions &&
+                      typeof mods.tooltipDescriptions.cardSectionDescription ===
+                        'string'
+                        ? mods.tooltipDescriptions.cardSectionDescription
+                        : 'A description of the section which will be visible on the form.'
+                    }
+                    id={`${elementId}_descriptioninfo`}
+                    type='help'
+                  />
+                </h5>
+                <Input
+                  value={schemaData.description || ''}
+                  placeholder='Description'
+                  type='text'
+                  onChange={(ev) =>
+                    onChange(
+                      {
+                        ...schema,
+                        description: ev.target.value,
+                      },
+                      uischema,
+                    )
                   }
-                  id={`${elementId}_titleinfo`}
-                  type='help'
+                  className='card-text'
                 />
-              </h5>
-              <Input
-                value={schemaData.title || ''}
-                placeholder='Title'
-                type='text'
-                onChange={(ev) =>
-                  onChange(
-                    {
-                      ...schema,
-                      title: ev.target.value,
-                    },
-                    uischema,
-                  )
-                }
-                className='card-text'
-              />
-            </div>
-            <div className='section-entry' data-test='section-description'>
-              <h5>
-                Section Description{' '}
-                <Tooltip
-                  text={
-                    mods &&
-                    mods.tooltipDescriptions &&
-                    mods.tooltipDescriptions &&
-                    typeof mods.tooltipDescriptions.cardSectionDescription ===
-                      'string'
-                      ? mods.tooltipDescriptions.cardSectionDescription
-                      : 'A description of the section which will be visible on the form.'
-                  }
-                  id={`${elementId}_descriptioninfo`}
-                  type='help'
-                />
-              </h5>
-              <Input
-                value={schemaData.description || ''}
-                placeholder='Description'
-                type='text'
-                onChange={(ev) =>
-                  onChange(
-                    {
-                      ...schema,
-                      description: ev.target.value,
-                    },
-                    uischema,
-                  )
-                }
-                className='card-text'
-              />
-            </div>
-            <Alert
-              style={{
-                display: unsupportedFeatures.length === 0 ? 'none' : 'block',
-              }}
-              color='warning'
-            >
-              <h5>Unsupported Features:</h5>
-              {unsupportedFeatures.map((message) => (
-                <li key={`${elementId}_${message}`}>{message}</li>
-              ))}
-            </Alert>
-          </div>
-          <div className='section-interactions'>
-            <span id={`${elementId}_editinfo`}>
-              <FontAwesomeIcon
-                icon={faPencilAlt}
-                onClick={() => setModalOpen(true)}
-              />
-            </span>
-            <UncontrolledTooltip
-              placement='top'
-              target={`${elementId}_editinfo`}
-            >
-              Additional configurations for this form element
-            </UncontrolledTooltip>
-            <FBCheckbox
-              onChangeValue={() => onRequireToggle()}
-              isChecked={required}
-              label='Required'
-              id={`${elementId}_required`}
-            />
-          </div>
-          <div className='section-body'>
-            <DragDropContext
-              onDragEnd={(result) =>
-                onDragEnd(result, {
-                  schema,
-                  uischema,
-                  onChange,
-                  definitionData,
-                  definitionUi,
-                  categoryHash,
-                })
-              }
-            >
-              <Droppable droppableId='droppable'>
-                {(providedDroppable) => (
-                  <div
-                    ref={providedDroppable.innerRef}
-                    {...providedDroppable.droppableProps}
-                  >
-                    {generateElementComponentsFromSchemas({
-                      schemaData: schema,
-                      uiSchemaData: uischema,
-                      onChange,
-                      path,
-                      definitionData,
-                      definitionUi,
-                      cardOpenArray,
-                      setCardOpenArray,
-                      allFormInputs,
-                      mods,
-                      categoryHash,
-                      Card,
-                      Section,
-                    }).map((element: any, index) => (
-                      <Draggable
-                        key={element.key}
-                        draggableId={element.key}
-                        index={index}
-                      >
-                        {(providedDraggable) => (
-                          <div
-                            ref={providedDraggable.innerRef}
-                            {...providedDraggable.draggableProps}
-                            {...providedDraggable.dragHandleProps}
-                          >
-                            {element}
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {providedDroppable.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-          </div>
-          <div className='section-footer'>
-            {!hideAddButton &&
-              mods?.components?.add &&
-              mods.components.add(addProperties)}
-            {!mods?.components?.add && (
-              <Add
-                tooltipDescription={
-                  ((mods || {}).tooltipDescriptions || {}).add
-                }
-                addElem={(choice: string) => {
-                  if (choice === 'card') {
-                    addCardObj(addProperties);
-                  } else if (choice === 'section') {
-                    addSectionObj(addProperties);
-                  }
+              </div>
+              <Alert
+                style={{
+                  display: unsupportedFeatures.length === 0 ? 'none' : 'block',
                 }}
-                hidden={hideAddButton}
+                color='warning'
+              >
+                <h5>Unsupported Features:</h5>
+                {unsupportedFeatures.map((message) => (
+                  <li key={`${elementId}_${message}`}>{message}</li>
+                ))}
+              </Alert>
+            </div>
+            <div className='section-interactions'>
+              <span id={`${elementId}_editinfo`}>
+                <FontAwesomeIcon
+                  icon={faPencilAlt}
+                  onClick={() => setModalOpen(true)}
+                />
+              </span>
+              <UncontrolledTooltip
+                placement='top'
+                target={`${elementId}_editinfo`}
+              >
+                Additional configurations for this form element
+              </UncontrolledTooltip>
+              <FBCheckbox
+                onChangeValue={() => onRequireToggle()}
+                isChecked={required}
+                label='Required'
+                id={`${elementId}_required`}
               />
-            )}
+            </div>
           </div>
-        </div>
-        <CardModal
-          componentProps={{
-            dependents,
-            neighborNames,
-            name: keyName,
-            schema,
-            type: 'object',
-            'ui:column': uischema['ui:column'] ?? '',
-            'ui:options': uischema['ui:options'] ?? '',
-          }}
-          isOpen={modalOpen}
-          onClose={() => setModalOpen(false)}
-          onChange={(newComponentProps: { [key: string]: any }) => {
-            onDependentsChange(newComponentProps.dependents);
-            onChange(schema, {
-              ...uischema,
-              'ui:column': newComponentProps['ui:column'],
-            });
-          }}
-          TypeSpecificParameters={CardDefaultParameterInputs}
-        />
+          <CardModal
+            componentProps={{
+              dependents,
+              neighborNames,
+              name: keyName,
+              schema,
+              type: 'object',
+              'ui:column': uischema['ui:column'] ?? '',
+              'ui:options': uischema['ui:options'] ?? '',
+            }}
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+            onChange={(newComponentProps: { [key: string]: any }) => {
+              onDependentsChange(newComponentProps.dependents);
+              onChange(schema, {
+                ...uischema,
+                'ui:column': newComponentProps['ui:column'],
+              });
+            }}
+            TypeSpecificParameters={CardDefaultParameterInputs}
+          />
+        </fieldset>
       </Collapse>
       {mods?.components?.add && mods.components.add(parentProperties)}
       {!mods?.components?.add && (

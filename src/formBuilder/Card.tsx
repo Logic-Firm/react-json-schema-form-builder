@@ -137,6 +137,15 @@ export default function Card({
         onDelete,
       })
     : null;
+  const defaultCardTitle = componentProps.title || componentProps.name || '';
+  const customCardTitle = mods?.components?.title
+    ? mods.components.title({
+        elementType: 'card',
+        defaultTitle: defaultCardTitle,
+        componentProps,
+        isOpen: cardOpen,
+      })
+    : null;
 
   return (
     <React.Fragment>
@@ -151,7 +160,7 @@ export default function Card({
         title={
           <React.Fragment>
             <span onClick={() => setCardOpen(!cardOpen)} className='label'>
-              {componentProps.title || componentProps.name}{' '}
+              {customCardTitle || defaultCardTitle}{' '}
               {componentProps.parent ? (
                 <Tooltip
                   text={`Depends on ${componentProps.parent}`}

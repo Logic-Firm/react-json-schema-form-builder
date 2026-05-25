@@ -143,6 +143,33 @@ describe('Card', () => {
     expect(wrapper.find('.toggle-collapse .fa-caret-right').exists()).toBeFalsy();
   });
 
+  it('renders a custom card title from mods', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const title = jest.fn(({ defaultTitle }) => (
+      <span className='custom-card-title'>Card: {defaultTitle}</span>
+    ));
+    const wrapper = mount(
+      <Card
+        {...props}
+        mods={{
+          components: {
+            title,
+          },
+        }}
+      />,
+      { attachTo: div },
+    );
+    expect(title).toHaveBeenCalledWith({
+      elementType: 'card',
+      defaultTitle: 'test',
+      componentProps: params,
+      isOpen: false,
+    });
+    expect(wrapper.find('.custom-card-title').exists()).toBeTruthy();
+    expect(wrapper.find('.custom-card-title').first().text()).toContain('Card: test');
+  });
+
   it('calls the move up and move down functions on arrow presses', () => {
     const div = document.createElement('div');
     document.body.appendChild(div);
