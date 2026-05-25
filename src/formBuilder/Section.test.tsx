@@ -142,6 +142,32 @@ describe('Section', () => {
     mockEvent.mockClear();
   });
 
+  it('renders a custom collapse toggle element from mods', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const collapseToggle = jest.fn(({ isOpen }) => (
+      <span className='custom-collapse-toggle'>{isOpen ? 'Open' : 'Closed'}</span>
+    ));
+    const wrapper = mount(
+      <Section
+        {...props}
+        mods={{
+          components: {
+            collapseToggle,
+          },
+        }}
+      />,
+      { attachTo: div },
+    );
+    expect(collapseToggle).toHaveBeenCalledWith({
+      elementType: 'section',
+      isOpen: false,
+      isDisabled: false,
+    });
+    expect(wrapper.find('.custom-collapse-toggle').exists()).toBeTruthy();
+    expect(wrapper.find('.toggle-collapse .fa-caret-right').exists()).toBeFalsy();
+  });
+
   it('changes the key name of the section', () => {
     const div = document.createElement('div');
     document.body.appendChild(div);

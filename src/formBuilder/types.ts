@@ -267,6 +267,11 @@ export interface Mods {
       };
       onDelete?: () => void;
     }) => ReactElement | ReactElement[] | [];
+    collapseToggle?: (properties: {
+      elementType: 'card' | 'section';
+      isOpen: boolean;
+      isDisabled?: boolean;
+    }) => ReactElement | ReactElement[] | [];
   };
   tooltipDescriptions?: {
     add?: string;

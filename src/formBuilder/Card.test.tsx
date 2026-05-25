@@ -117,6 +117,32 @@ describe('Card', () => {
     mockEvent.mockClear();
   });
 
+  it('renders a custom collapse toggle element from mods', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    const collapseToggle = jest.fn(({ isOpen }) => (
+      <button className='custom-collapse-toggle'>{isOpen ? 'Open' : 'Closed'}</button>
+    ));
+    const wrapper = mount(
+      <Card
+        {...props}
+        mods={{
+          components: {
+            collapseToggle,
+          },
+        }}
+      />,
+      { attachTo: div },
+    );
+    expect(collapseToggle).toHaveBeenCalledWith({
+      elementType: 'card',
+      isOpen: false,
+      isDisabled: false,
+    });
+    expect(wrapper.find('.custom-collapse-toggle').exists()).toBeTruthy();
+    expect(wrapper.find('.toggle-collapse .fa-caret-right').exists()).toBeFalsy();
+  });
+
   it('calls the move up and move down functions on arrow presses', () => {
     const div = document.createElement('div');
     document.body.appendChild(div);

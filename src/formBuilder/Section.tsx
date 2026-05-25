@@ -179,6 +179,11 @@ export default function Section({
       <Collapse
         isOpen={cardOpen}
         toggleCollapse={() => setCardOpen(!cardOpen)}
+        toggleElement={mods?.components?.collapseToggle?.({
+          elementType: 'section',
+          isOpen: cardOpen,
+          isDisabled: false,
+        })}
         title={
           <React.Fragment>
             <span onClick={() => setCardOpen(!cardOpen)} className='label'>

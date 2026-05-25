@@ -30,7 +30,7 @@ interface CollapseProps {
   // Determines if the Collapse component is open
   isOpen: boolean;
   // Toggles the isOpen boolean between true and false
-  toggleCollapse: (event: MouseEvent<SVGSVGElement>) => void;
+  toggleCollapse: (event: MouseEvent<HTMLElement>) => void;
   // The title to display in the collapse header
   title: ReactNode;
   // Anything to be rendered within the collapse
@@ -39,6 +39,7 @@ interface CollapseProps {
   disableToggle?: boolean;
   className?: string;
   headerActions?: ReactNode;
+  toggleElement?: ReactNode;
 }
 
 const Collapse: FC<CollapseProps> = (props) => {
@@ -52,15 +53,17 @@ const Collapse: FC<CollapseProps> = (props) => {
   return (
     <div className={classes}>
       <div className='d-flex'>
-        <span className='toggle-collapse'>
-          <FontAwesomeIcon
-            onClick={(event) => {
-              if (!props.disableToggle) {
-                props.toggleCollapse(event);
-              }
-            }}
-            icon={props.isOpen ? faCaretDown : faCaretRight}
-          />
+        <span
+          className='toggle-collapse'
+          onClick={(event) => {
+            if (!props.disableToggle && !event.defaultPrevented) {
+              props.toggleCollapse(event);
+            }
+          }}
+        >
+          {props.toggleElement || (
+            <FontAwesomeIcon icon={props.isOpen ? faCaretDown : faCaretRight} />
+          )}
         </span>
         <h4>{props.title}</h4>
         <span className='header-actions'>{props.headerActions}</span>

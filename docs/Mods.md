@@ -17,6 +17,11 @@ interface Mods {
     add?: (properties?: {
       [key: string]: any;
     }) => ReactElement | ReactElement[] | [];
+    collapseToggle?: (properties: {
+      elementType: 'card' | 'section';
+      isOpen: boolean;
+      isDisabled?: boolean;
+    }) => ReactElement | ReactElement[] | [];
   };
   tooltipDescriptions?: {
     add?: string;
@@ -52,6 +57,8 @@ interface Mods {
 ```
 
 `tooltipDescriptions` and `labels` describe how some of the labels and tooltips in the Form Builder are to be customized. `showFormHead` is a boolean which controls whether the top section of the Form Builder, which contains inputs for the Form Name and Form Description, are show. It is set to `true` by default.
+
+`components.collapseToggle` allows customizing the collapse toggle with any React element (for example, an SVG, image, button, or custom component) for cards and sections while preserving default toggle behavior.
 
 A single `FormInput` has a type definition `FormInputType` as follows:
 
