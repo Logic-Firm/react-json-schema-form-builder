@@ -18,6 +18,16 @@ interface Mods {
       [key: string]: any;
     }) => ReactElement | ReactElement[] | [];
     collapseToggle?: (properties: {
+      componentProps?: CardComponentPropsType;
+      sectionProps?: {
+        name: string;
+        schema: { [key: string]: any };
+        uischema: { [key: string]: any };
+        reference?: string;
+        dependent?: boolean;
+        parent?: string;
+        parentCardType?: string;
+      };
       elementType: 'card' | 'section';
       isOpen: boolean;
       isDisabled?: boolean;
@@ -33,6 +43,7 @@ interface Mods {
         reference?: string;
         dependent?: boolean;
         parent?: string;
+        parentCardType?: string;
       };
       isOpen: boolean;
     }) => ReactElement | ReactElement[] | [];
@@ -73,6 +84,8 @@ interface Mods {
 `tooltipDescriptions` and `labels` describe how some of the labels and tooltips in the Form Builder are to be customized. `showFormHead` is a boolean which controls whether the top section of the Form Builder, which contains inputs for the Form Name and Form Description, are show. It is set to `true` by default.
 
 `components.collapseToggle` allows customizing the collapse toggle with any React element (for example, an SVG, image, button, or custom component) for cards and sections while preserving default toggle behavior.
+
+When rendering a section inside an array card's `items`, both `components.collapseToggle` and `components.title` receive `sectionProps.parentCardType = 'array'`. Consumers can identify the array items section by checking `sectionProps.parentCardType === 'array' && sectionProps.name === 'items'`.
 
 `components.title` allows customizing the rendered header title for cards and sections while preserving existing collapse behavior and element metadata.
 

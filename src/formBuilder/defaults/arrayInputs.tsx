@@ -134,6 +134,7 @@ const InnerCard: CardComponentType = ({ parameters, onChange, mods }) => {
         allFormInputs,
         mods,
         categoryHash: generateCategoryHash(allFormInputs),
+        parentCardComponentProps: parameters,
         Card: (props) => <Card {...props} showObjectNameInput={false} />,
         Section,
       })}

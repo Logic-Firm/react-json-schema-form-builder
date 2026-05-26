@@ -138,6 +138,7 @@ describe('Card', () => {
       elementType: 'card',
       isOpen: false,
       isDisabled: false,
+      componentProps: params,
     });
     expect(wrapper.find('.custom-collapse-toggle').exists()).toBeTruthy();
     expect(wrapper.find('.toggle-collapse .fa-caret-right').exists()).toBeFalsy();

@@ -31,7 +31,6 @@ const useStyles = createUseStyles({
     },
   },
   cardEntries: {
-    'border-bottom': '1px solid gray',
     margin: '.5em 1.5em 0 1.5em',
     '& h5': {
       color: 'black',
@@ -156,6 +155,7 @@ export default function Card({
           elementType: 'card',
           isOpen: cardOpen,
           isDisabled: false,
+          componentProps,
         })}
         title={
           <React.Fragment>

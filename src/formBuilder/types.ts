@@ -73,6 +73,16 @@ export interface CardModalProps {
 
 export type CardModalType = FunctionComponent<CardModalProps>;
 
+export interface SectionModPropsType {
+  name: string;
+  schema: { [key: string]: any };
+  uischema: { [key: string]: any };
+  reference?: string;
+  dependent?: boolean;
+  parent?: string;
+  parentCardType?: string;
+}
+
 export interface SectionPropsType {
   name: string;
   required: boolean;
@@ -111,6 +121,7 @@ export interface SectionPropsType {
   reference?: string;
   dependent?: boolean;
   parent?: string;
+  parentCardType?: string;
   mods?: Mods;
 }
 
@@ -257,17 +268,12 @@ export interface Mods {
     delete?: (properties?: {
       elementType: 'card' | 'section';
       componentProps?: CardComponentPropsType;
-      sectionProps?: {
-        name: string;
-        schema: { [key: string]: any };
-        uischema: { [key: string]: any };
-        reference?: string;
-        dependent?: boolean;
-        parent?: string;
-      };
+      sectionProps?: SectionModPropsType;
       onDelete?: () => void;
     }) => ReactElement | ReactElement[] | [];
     collapseToggle?: (properties: {
+      componentProps?: CardComponentPropsType;
+      sectionProps?: SectionModPropsType;
       elementType: 'card' | 'section';
       isOpen: boolean;
       isDisabled?: boolean;
@@ -276,14 +282,7 @@ export interface Mods {
       elementType: 'card' | 'section';
       defaultTitle: string;
       componentProps?: CardComponentPropsType;
-      sectionProps?: {
-        name: string;
-        schema: { [key: string]: any };
-        uischema: { [key: string]: any };
-        reference?: string;
-        dependent?: boolean;
-        parent?: string;
-      };
+      sectionProps?: SectionModPropsType;
       isOpen: boolean;
     }) => ReactElement | ReactElement[] | [];
   };

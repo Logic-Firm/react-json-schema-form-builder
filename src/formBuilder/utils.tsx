@@ -1090,6 +1090,7 @@ export function generateElementComponentsFromSchemas(parameters: {
   allFormInputs: { [key: string]: FormInput };
   mods?: Mods;
   categoryHash: { [key: string]: string };
+  parentCardComponentProps?: CardComponentPropsType;
   Card: CardType;
   Section: SectionType;
 }): ReactNode[] {
@@ -1106,6 +1107,7 @@ export function generateElementComponentsFromSchemas(parameters: {
     allFormInputs,
     mods,
     categoryHash,
+    parentCardComponentProps,
     Card,
     Section,
   } = parameters;
@@ -1516,6 +1518,7 @@ export function generateElementComponentsFromSchemas(parameters: {
           dependents={elementProp.dependents!}
           dependent={elementProp.dependent}
           parent={elementProp.parent}
+          parentCardType={parentCardComponentProps?.type}
           parentProperties={addProperties}
           cardOpen={expanded}
           setCardOpen={(newState: boolean) =>

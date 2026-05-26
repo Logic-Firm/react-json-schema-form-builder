@@ -88,12 +88,12 @@ describe('Section', () => {
     mockEvent.mockClear();
   });
 
-  it('keeps section child body outside the collapsible edit area', () => {
+  it('keeps section child body inside the collapsible area', () => {
     const div = document.createElement('div');
     document.body.appendChild(div);
     const wrapper = mount(<Section {...props} />, { attachTo: div });
     expect(wrapper.find('.section-body').exists()).toBeTruthy();
-    expect(wrapper.find('.collapse').first().find('.section-body').exists()).toBeFalsy();
+    expect(wrapper.find('.collapse').first().find('.section-body').exists()).toBeTruthy();
   });
 
   it('renders a custom delete button from mods for sections', () => {
@@ -171,6 +171,15 @@ describe('Section', () => {
       elementType: 'section',
       isOpen: false,
       isDisabled: false,
+      sectionProps: {
+        name: 'test',
+        schema: {},
+        uischema: {},
+        reference: undefined,
+        dependent: undefined,
+        parent: undefined,
+        parentCardType: undefined,
+      },
     });
     expect(wrapper.find('.custom-collapse-toggle').exists()).toBeTruthy();
     expect(wrapper.find('.toggle-collapse .fa-caret-right').exists()).toBeFalsy();
@@ -203,6 +212,7 @@ describe('Section', () => {
         reference: undefined,
         dependent: undefined,
         parent: undefined,
+        parentCardType: undefined,
       },
       isOpen: false,
     });

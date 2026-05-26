@@ -33,7 +33,7 @@ import {
 } from './utils';
 import FontAwesomeIcon from './FontAwesomeIcon';
 import { getRandomId } from './utils';
-import type { SectionPropsType } from './types';
+import type { SectionPropsType, SectionModPropsType } from './types';
 
 const useStyles = createUseStyles({
   headerDelete: {
@@ -122,6 +122,7 @@ export default function Section({
   dependents,
   dependent,
   parent,
+  parentCardType,
   parentProperties,
   neighborNames,
   cardOpen,
@@ -148,13 +149,14 @@ export default function Section({
   // keep requirements in state to avoid rapid updates
   const [modalOpen, setModalOpen] = React.useState(false);
   const [elementId] = React.useState(getRandomId());
-  const sectionModProps = {
+  const sectionModProps: SectionModPropsType = {
     name,
     schema,
     uischema,
     reference,
     dependent,
     parent,
+    parentCardType,
   };
   const customDeleteButton = mods?.components?.delete
     ? mods.components.delete({
@@ -193,6 +195,7 @@ export default function Section({
           elementType: 'section',
           isOpen: cardOpen,
           isDisabled: false,
+          sectionProps: sectionModProps,
         })}
         title={
           <React.Fragment>
@@ -259,86 +262,6 @@ export default function Section({
         className={`section-container ${classes.sectionContainer} ${
           dependent ? 'section-dependent' : ''
         } ${reference ? 'section-reference' : ''}`}
-        alwaysVisibleChildren={
-          <div
-            className={`section-entries ${reference ? 'section-reference' : ''}`}
-          >
-            <div className='section-body'>
-              <DragDropContext
-                onDragEnd={(result) =>
-                  onDragEnd(result, {
-                    schema,
-                    uischema,
-                    onChange,
-                    definitionData,
-                    definitionUi,
-                    categoryHash,
-                  })
-                }
-              >
-                <Droppable droppableId='droppable'>
-                  {(providedDroppable) => (
-                    <div
-                      ref={providedDroppable.innerRef}
-                      {...providedDroppable.droppableProps}
-                    >
-                      {generateElementComponentsFromSchemas({
-                        schemaData: schema,
-                        uiSchemaData: uischema,
-                        onChange,
-                        path,
-                        definitionData,
-                        definitionUi,
-                        cardOpenArray,
-                        setCardOpenArray,
-                        allFormInputs,
-                        mods,
-                        categoryHash,
-                        Card,
-                        Section,
-                      }).map((element: any, index) => (
-                        <Draggable
-                          key={element.key}
-                          draggableId={element.key}
-                          index={index}
-                        >
-                          {(providedDraggable) => (
-                            <div
-                              ref={providedDraggable.innerRef}
-                              {...providedDraggable.draggableProps}
-                              {...providedDraggable.dragHandleProps}
-                            >
-                              {element}
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
-                      {providedDroppable.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-              </DragDropContext>
-            </div>
-            <div className='section-footer'>
-              {!hideAddButton &&
-                mods?.components?.add &&
-                mods.components.add(addProperties)}
-              {!mods?.components?.add && (
-                <Add
-                  tooltipDescription={((mods || {}).tooltipDescriptions || {}).add}
-                  addElem={(choice: string) => {
-                    if (choice === 'card') {
-                      addCardObj(addProperties);
-                    } else if (choice === 'section') {
-                      addSectionObj(addProperties);
-                    }
-                  }}
-                  hidden={hideAddButton}
-                />
-              )}
-            </div>
-          </div>
-        }
       >
         <fieldset style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
           <div
@@ -488,6 +411,80 @@ export default function Section({
                   <li key={`${elementId}_${message}`}>{message}</li>
                 ))}
               </Alert>
+            </div>
+            <div className='section-body'>
+              <DragDropContext
+                onDragEnd={(result) =>
+                  onDragEnd(result, {
+                    schema,
+                    uischema,
+                    onChange,
+                    definitionData,
+                    definitionUi,
+                    categoryHash,
+                  })
+                }
+              >
+                <Droppable droppableId='droppable'>
+                  {(providedDroppable) => (
+                    <div
+                      ref={providedDroppable.innerRef}
+                      {...providedDroppable.droppableProps}
+                    >
+                      {generateElementComponentsFromSchemas({
+                        schemaData: schema,
+                        uiSchemaData: uischema,
+                        onChange,
+                        path,
+                        definitionData,
+                        definitionUi,
+                        cardOpenArray,
+                        setCardOpenArray,
+                        allFormInputs,
+                        mods,
+                        categoryHash,
+                        Card,
+                        Section,
+                      }).map((element: any, index) => (
+                        <Draggable
+                          key={element.key}
+                          draggableId={element.key}
+                          index={index}
+                        >
+                          {(providedDraggable) => (
+                            <div
+                              ref={providedDraggable.innerRef}
+                              {...providedDraggable.draggableProps}
+                              {...providedDraggable.dragHandleProps}
+                            >
+                              {element}
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {providedDroppable.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            </div>
+            <div className='section-footer'>
+              {!hideAddButton &&
+                mods?.components?.add &&
+                mods.components.add(addProperties)}
+              {!mods?.components?.add && (
+                <Add
+                  tooltipDescription={((mods || {}).tooltipDescriptions || {}).add}
+                  addElem={(choice: string) => {
+                    if (choice === 'card') {
+                      addCardObj(addProperties);
+                    } else if (choice === 'section') {
+                      addSectionObj(addProperties);
+                    }
+                  }}
+                  hidden={hideAddButton}
+                />
+              )}
             </div>
             <div className='section-interactions'>
               <span id={`${elementId}_editinfo`}>
