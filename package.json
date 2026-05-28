@@ -32,7 +32,8 @@
     "test:ts": "tsc",
     "test:prettier": "prettier -c src",
     "test:unit": "jest --env=jsdom --coverage --coverageDirectory=coverage/",
-    "test:watch": "jest --watch --env=jsdom"
+    "test:watch": "jest --watch --env=jsdom",
+    "prepare": "npm run build"
   },
   "peerDependencies": {
     "bootstrap": "^4.6.0 || ^5.1.3",
