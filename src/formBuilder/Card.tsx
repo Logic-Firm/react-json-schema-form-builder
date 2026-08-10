@@ -121,7 +121,6 @@ export default function Card({
   allFormInputs,
   mods,
   showObjectNameInput = true,
-  addProperties,
 }: CardPropsType): ReactElement {
   const classes = useStyles();
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -283,7 +282,8 @@ export default function Card({
           />
         </fieldset>
       </Collapse>
-      {mods?.components?.add && mods?.components?.add(addProperties)}
+      {/* Custom add is rendered in FormBuilder/Section footers so it stays
+          outside Draggable wrappers and does not move while dragging. */}
       {!mods?.components?.add && addElem && (
         <Add
           tooltipDescription={((mods || {}).tooltipDescriptions || {}).add}

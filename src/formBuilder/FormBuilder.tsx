@@ -374,9 +374,7 @@ export default function FormBuilder({
         </DragDropContext>
       </div>
       <div className={`form-footer ${classes.formFooter}`}>
-        {!hideAddButton &&
-          mods?.components?.add &&
-          mods.components.add(addProperties)}
+        {mods?.components?.add && mods.components.add(addProperties)}
         {!mods?.components?.add && (
           <Add
             tooltipDescription={((mods || {}).tooltipDescriptions || {}).add}

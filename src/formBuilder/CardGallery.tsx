@@ -103,9 +103,7 @@ export default function CardGallery({
       {componentArr}
       {componentArr.length === 0 && <h5>No components in "definitions"</h5>}
       <div className='form_footer'>
-        {!hideAddButton &&
-          mods?.components?.add &&
-          mods.components.add(addProperties)}
+        {mods?.components?.add && mods.components.add(addProperties)}
         {!mods?.components?.add && (
           <Add
             tooltipDescription={((mods || {}).tooltipDescriptions || {}).add}

@@ -469,9 +469,7 @@ export default function Section({
               </DragDropContext>
             </div>
             <div className='section-footer'>
-              {!hideAddButton &&
-                mods?.components?.add &&
-                mods.components.add(addProperties)}
+              {mods?.components?.add && mods.components.add(addProperties)}
               {!mods?.components?.add && (
                 <Add
                   tooltipDescription={((mods || {}).tooltipDescriptions || {}).add}
@@ -530,7 +528,8 @@ export default function Section({
           />
         </fieldset>
       </Collapse>
-      {mods?.components?.add && mods.components.add(parentProperties)}
+      {/* Custom add is rendered in FormBuilder/Section footers so it stays
+          outside Draggable wrappers and does not move while dragging. */}
       {!mods?.components?.add && (
         <Add
           tooltipDescription={((mods || {}).tooltipDescriptions || {}).add}
