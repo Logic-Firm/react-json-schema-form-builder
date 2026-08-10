@@ -1297,8 +1297,12 @@ function generateElementComponentsFromSchemas(parameters) {
 // function called when drag and drop ends
 function onDragEnd(result, details) {
     const { schema, uischema, onChange, definitionData, definitionUi, categoryHash, } = details;
+    if (!result.destination)
+        return;
     const src = result.source.index;
     const dest = result.destination.index;
+    if (src === dest)
+        return;
     const newElementObjArr = generateElementPropsFromSchemas({
         schema,
         uischema,
@@ -1306,9 +1310,8 @@ function onDragEnd(result, details) {
         definitionUi,
         categoryHash,
     });
-    const tempBlock = newElementObjArr[src];
-    newElementObjArr[src] = newElementObjArr[dest];
-    newElementObjArr[dest] = tempBlock;
+    const [moved] = newElementObjArr.splice(src, 1);
+    newElementObjArr.splice(dest, 0, moved);
     updateSchemas(newElementObjArr, {
         schema,
         uischema,
@@ -2152,8 +2155,8 @@ const useStyles$4 = createUseStyles({
         '& .interactions-right': { textAlign: 'right' },
     },
 });
-function Card({ componentProps, onChange, onDelete, onMoveUp, onMoveDown, TypeSpecificParameters, addElem, cardOpen, setCardOpen, allFormInputs, mods, showObjectNameInput = true, addProperties, }) {
-    var _a, _b, _c, _d, _e, _f, _g;
+function Card({ componentProps, onChange, onDelete, onMoveUp, onMoveDown, TypeSpecificParameters, addElem, cardOpen, setCardOpen, allFormInputs, mods, showObjectNameInput = true, }) {
+    var _a, _b, _c, _d, _e;
     const classes = useStyles$4();
     const [modalOpen, setModalOpen] = React.useState(false);
     const [elementId] = React.useState(getRandomId());
@@ -2210,8 +2213,7 @@ function Card({ componentProps, onChange, onDelete, onMoveUp, onMoveDown, TypeSp
                 React.createElement(CardModal, { componentProps: componentProps, isOpen: modalOpen, onClose: () => setModalOpen(false), onChange: (newComponentProps) => {
                         onChange(newComponentProps);
                     }, TypeSpecificParameters: TypeSpecificParameters }))),
-        ((_e = mods === null || mods === void 0 ? void 0 : mods.components) === null || _e === void 0 ? void 0 : _e.add) && ((_f = mods === null || mods === void 0 ? void 0 : mods.components) === null || _f === void 0 ? void 0 : _f.add(addProperties)),
-        !((_g = mods === null || mods === void 0 ? void 0 : mods.components) === null || _g === void 0 ? void 0 : _g.add) && addElem && (React.createElement(Add, { tooltipDescription: ((mods || {}).tooltipDescriptions || {}).add, addElem: (choice) => addElem(choice) }))));
+        !((_e = mods === null || mods === void 0 ? void 0 : mods.components) === null || _e === void 0 ? void 0 : _e.add) && addElem && (React.createElement(Add, { tooltipDescription: ((mods || {}).tooltipDescriptions || {}).add, addElem: (choice) => addElem(choice) }))));
 }
 
 const useStyles$3 = createUseStyles({
@@ -2451,7 +2453,7 @@ const useStyles$2 = createUseStyles({
     },
 });
 function Section({ name, required, schema, uischema, onChange, onNameChange, onRequireToggle, onDependentsChange, onDelete, onMoveUp, onMoveDown, path, definitionData, definitionUi, hideKey, reference, dependents, dependent, parent, parentCardType, parentProperties, neighborNames, cardOpen, setCardOpen, allFormInputs, mods, categoryHash, }) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
     const classes = useStyles$2();
     const unsupportedFeatures = checkForUnsupportedFeatures(schema || {}, uischema || {}, allFormInputs);
     const schemaData = schema || {};
@@ -2616,9 +2618,7 @@ function Section({ name, required, schema, uischema, onChange, onNameChange, onR
                                 }).map((element, index) => (React.createElement(Draggable, { key: element.key, draggableId: element.key, index: index }, (providedDraggable) => (React.createElement("div", Object.assign({ ref: providedDraggable.innerRef }, providedDraggable.draggableProps, providedDraggable.dragHandleProps), element))))),
                                 providedDroppable.placeholder))))),
                     React.createElement("div", { className: 'section-footer' },
-                        !hideAddButton &&
-                            ((_e = mods === null || mods === void 0 ? void 0 : mods.components) === null || _e === void 0 ? void 0 : _e.add) &&
-                            mods.components.add(addProperties),
+                        ((_e = mods === null || mods === void 0 ? void 0 : mods.components) === null || _e === void 0 ? void 0 : _e.add) && mods.components.add(addProperties),
                         !((_f = mods === null || mods === void 0 ? void 0 : mods.components) === null || _f === void 0 ? void 0 : _f.add) && (React.createElement(Add, { tooltipDescription: ((mods || {}).tooltipDescriptions || {}).add, addElem: (choice) => {
                                 if (choice === 'card') {
                                     addCardObj(addProperties);
@@ -2644,8 +2644,7 @@ function Section({ name, required, schema, uischema, onChange, onNameChange, onR
                         onDependentsChange(newComponentProps.dependents);
                         onChange(schema, Object.assign(Object.assign({}, uischema), { 'ui:column': newComponentProps['ui:column'] }));
                     }, TypeSpecificParameters: CardDefaultParameterInputs }))),
-        ((_j = mods === null || mods === void 0 ? void 0 : mods.components) === null || _j === void 0 ? void 0 : _j.add) && mods.components.add(parentProperties),
-        !((_k = mods === null || mods === void 0 ? void 0 : mods.components) === null || _k === void 0 ? void 0 : _k.add) && (React.createElement(Add, { tooltipDescription: ((mods || {}).tooltipDescriptions || {}).add, addElem: (choice) => {
+        !((_j = mods === null || mods === void 0 ? void 0 : mods.components) === null || _j === void 0 ? void 0 : _j.add) && (React.createElement(Add, { tooltipDescription: ((mods || {}).tooltipDescriptions || {}).add, addElem: (choice) => {
                 if (choice === 'card') {
                     addCardObj(parentProperties);
                 }
@@ -3354,9 +3353,7 @@ function FormBuilder({ schema, uischema, onMount, onChange, mods, className, }) 
                     }).map((element, index) => (React.createElement(Draggable, { key: element.key, draggableId: element.key, index: index }, (providedDraggable) => (React.createElement("div", Object.assign({ ref: providedDraggable.innerRef }, providedDraggable.draggableProps, providedDraggable.dragHandleProps), element))))),
                     providedDroppable.placeholder))))),
         React.createElement("div", { className: `form-footer ${classes.formFooter}` },
-            !hideAddButton &&
-                ((_a = mods === null || mods === void 0 ? void 0 : mods.components) === null || _a === void 0 ? void 0 : _a.add) &&
-                mods.components.add(addProperties),
+            ((_a = mods === null || mods === void 0 ? void 0 : mods.components) === null || _a === void 0 ? void 0 : _a.add) && mods.components.add(addProperties),
             !((_b = mods === null || mods === void 0 ? void 0 : mods.components) === null || _b === void 0 ? void 0 : _b.add) && (React.createElement(Add, { tooltipDescription: ((mods || {}).tooltipDescriptions || {}).add, labels: (_c = mods === null || mods === void 0 ? void 0 : mods.labels) !== null && _c !== void 0 ? _c : {}, addElem: (choice) => {
                     if (choice === 'card') {
                         addCardObj(addProperties);
@@ -3420,9 +3417,7 @@ function CardGallery({ definitionSchema, definitionUiSchema, onChange, mods, cat
         componentArr,
         componentArr.length === 0 && React.createElement("h5", null, "No components in \"definitions\""),
         React.createElement("div", { className: 'form_footer' },
-            !hideAddButton &&
-                ((_a = mods === null || mods === void 0 ? void 0 : mods.components) === null || _a === void 0 ? void 0 : _a.add) &&
-                mods.components.add(addProperties),
+            ((_a = mods === null || mods === void 0 ? void 0 : mods.components) === null || _a === void 0 ? void 0 : _a.add) && mods.components.add(addProperties),
             !((_b = mods === null || mods === void 0 ? void 0 : mods.components) === null || _b === void 0 ? void 0 : _b.add) && (React.createElement(Add, { tooltipDescription: ((mods || {}).tooltipDescriptions || {}).add, addElem: (choice) => {
                     if (choice === 'card') {
                         addCardObj(addProperties);
