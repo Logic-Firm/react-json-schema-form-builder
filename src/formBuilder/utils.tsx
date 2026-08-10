@@ -1568,8 +1568,12 @@ export function onDragEnd(
     definitionUi,
     categoryHash,
   } = details;
+  if (!result.destination) return;
+
   const src = result.source.index;
   const dest = result.destination.index;
+  if (src === dest) return;
+
   const newElementObjArr = generateElementPropsFromSchemas({
     schema,
     uischema,
@@ -1578,9 +1582,8 @@ export function onDragEnd(
     categoryHash,
   });
 
-  const tempBlock = newElementObjArr[src];
-  newElementObjArr[src] = newElementObjArr[dest];
-  newElementObjArr[dest] = tempBlock;
+  const [moved] = newElementObjArr.splice(src, 1);
+  newElementObjArr.splice(dest, 0, moved);
 
   updateSchemas(newElementObjArr, {
     schema,

@@ -17,6 +17,7 @@ import {
   getCardCategory,
   getNewElementDefaultDataOptions,
   getRandomId,
+  onDragEnd,
   parse,
   stringify,
   subtractArray,
@@ -928,5 +929,51 @@ describe('addSectionObj', () => {
 describe('getRandomId', () => {
   it('should return string of length 50 of random lower case letters', () => {
     expect(getRandomId()).toMatch(/^[a-z]{50}$/);
+  });
+});
+
+describe('onDragEnd', () => {
+  const dragSchema = {
+    type: 'object',
+    properties: {
+      first: { type: 'string', title: 'First' },
+      second: { type: 'string', title: 'Second' },
+      third: { type: 'string', title: 'Third' },
+    },
+  };
+  const dragUiSchema = {
+    'ui:order': ['first', 'second', 'third'],
+  };
+
+  it('moves an element to the destination index instead of swapping', () => {
+    const onChange = jest.fn();
+    onDragEnd(
+      { source: { index: 2 }, destination: { index: 0 } },
+      {
+        schema: dragSchema,
+        uischema: dragUiSchema,
+        onChange,
+        categoryHash: generateCategoryHash(DEFAULT_FORM_INPUTS),
+      },
+    );
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    const [, nextUiSchema] = onChange.mock.calls[0];
+    expect(nextUiSchema['ui:order']).toEqual(['third', 'first', 'second']);
+  });
+
+  it('does nothing when there is no destination', () => {
+    const onChange = jest.fn();
+    onDragEnd(
+      { source: { index: 2 }, destination: null },
+      {
+        schema: dragSchema,
+        uischema: dragUiSchema,
+        onChange,
+        categoryHash: generateCategoryHash(DEFAULT_FORM_INPUTS),
+      },
+    );
+
+    expect(onChange).not.toHaveBeenCalled();
   });
 });
